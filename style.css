@@ -1,0 +1,29 @@
+
+.startPage {
+	background-image: url("cat_image.jpg");
+	background-repeat: no-repeat;
+	background-position: 50% 60%;
+	position: relative;
+	text-align: center;
+	height: 750px;
+	width: 100%;
+}
+
+#startText {
+	margin: 40px auto;
+	}
+
+#startButton {
+	font-size: 20px;
+	padding: 10px 30px 10px 30px;
+
+}
+
+
+
+.gameStarted {
+	position: absolute;
+	height: 800px;
+	width: 100%;
+	display: none;
+}
