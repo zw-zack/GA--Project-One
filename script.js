@@ -20,6 +20,7 @@ var myTiger;
 var tigers = new Array(0);
 var dinos = new Array(0);
 var ghosts = new Array(0);
+var aliens = new Array(0);
 var cakes = new Array(0);
 var potions = new Array(0);
 var healthpacks = new Array(0);
@@ -76,13 +77,19 @@ function gameStart() {
 		var myPotion = new friendliesTypeTwo(15,15, "potion.png", Math.random()*1100, Math.random()*550, "image", 1);
 		potions.push(myPotion);
 	}
-	var potionInterval = setInterval(makePotions, 60000);
+	var potionInterval = setInterval(makePotions, 50000);
 
 	function makeHealthpacks(){
 		var myHealthpack = new friendliesTypeThree(30, 30, "healthpack.jpg", Math.random()*1100, Math.random()*550, "image", 1);
 		healthpacks.push(myHealthpack);
 	}
-	var healthpacksInterval = setInterval(makeHealthpacks, 25000);
+	var healthpackInterval = setInterval(makeHealthpacks, 25000);
+
+	function makeAliens(){
+		var myAlien = new enemyTypeFour(120, 120, "alien.png", 50, Math.random()*590, "image", 1);
+		aliens.push(myAlien);
+	}
+	var alienInterval = setInterval(makeAliens, 60000);
 
 
 
@@ -275,6 +282,39 @@ function enemyTypeThree(width, height, color, x, y, type, status) {
 	}
 }
 
+//aliens
+function enemyTypeFour(width, height, color, x, y, type, status) {
+	this.status= status;
+	this.type = type;
+	if (type == "image") {
+		this.image = new Image();
+		this.image.src = color;
+	}
+	this.width = width;
+	this.height = height;
+	this.speedX = Math.random() +4;
+	this.speedY = -Math.random() -4;    
+	this.x = x;
+	this.y = y;    
+	this.update = function() {
+		ctx = myGameArea.context;
+		if (this.type == "image") {
+			ctx.drawImage(this.image, 
+				this.x, 
+				this.y,
+				this.width, this.height);
+		} 
+		else {
+			ctx.fillStyle = color;
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+		}
+	}
+	this.newPos = function() {
+		this.x += this.speedX;
+		this.y += this.speedY;   
+	}
+}
+
 //cakes
 function friendliesTypeOne(width, height, color, x, y, type, status) {
 	this.status = status;
@@ -392,7 +432,7 @@ function updateGameArea() {
 		if (myGamePiece.crashWith(tigers[i]) && tigers[i].status === 1 && myGamePiece.godMode === 0) {
 			myGameArea.lives--;
 			tigers[i].status = 0;
-			if(myGameArea.lives === 0){
+			if(myGameArea.lives <= 0){
 				youLost();
 				myGameArea.stop()
 			}
@@ -406,7 +446,7 @@ function updateGameArea() {
 		if (myGamePiece.crashWith(dinos[i]) && dinos[i].status === 1 && myGamePiece.godMode === 0) {
 			myGameArea.lives--;
 			dinos[i].status = 0;
-			if(myGameArea.lives === 0){
+			if(myGameArea.lives <= 0){
 				youLost();
 				myGameArea.stop()
 			}
@@ -420,7 +460,21 @@ function updateGameArea() {
 		if (myGamePiece.crashWith(ghosts[i]) && ghosts[i].status === 1 && myGamePiece.godMode === 0) {
 			myGameArea.lives--;
 			ghosts[i].status = 0;
-			if(myGameArea.lives === 0){
+			if(myGameArea.lives <= 0){
+				youLost();
+				myGameArea.stop()
+			}
+		}
+	}
+
+	for (var i = 0; i < aliens.length; i ++) {
+		if (myGamePiece.crashWith(aliens[i]) && myGamePiece.godMode === 1) {
+			aliens[i].status = 0;
+		}
+		if (myGamePiece.crashWith(aliens[i]) && aliens[i].status === 1 && myGamePiece.godMode === 0) {
+			myGameArea.lives -= 3;
+			aliens[i].status = 0;
+			if(myGameArea.lives <= 0){
 				youLost();
 				myGameArea.stop()
 			}
@@ -528,6 +582,25 @@ function updateGameArea() {
 		if(ghosts[i].status === 1){
 			ghosts[i].update();
 			ghosts[i].newPos();
+		}
+	}
+
+	for( var i = 0; i < aliens.length; i++ ) {
+		if (aliens[i].x <= 0) {
+			aliens[i].speedX = aliens[i].speedX* -1 ;
+		}
+		if (aliens[i].x >= 1090) {
+			aliens[i].speedX =  aliens[i].speedX* -1;
+		}
+		if (aliens[i].y <= -5) {
+			aliens[i].speedY = aliens[i].speedY* -1;
+		}
+		if (aliens[i].y >= 590) {
+			aliens[i].speedY = aliens[i].speedY* -1;
+		}
+		if(aliens[i].status === 1){
+			aliens[i].update();
+			aliens[i].newPos();
 		}
 	}
 
