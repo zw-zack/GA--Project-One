@@ -21,6 +21,7 @@ var tigers = new Array(0);
 var dinos = new Array(0);
 var ghosts = new Array(0);
 var cakes = new Array(0);
+var potions = new Array(0);
 
 var myScore;
 
@@ -29,6 +30,7 @@ function gameStart() {
 	myGamePiece = new component(30, 30, "cat_image.png", 580, 300, "image", 1);
 	myBackground = new component(1200, 700, "bgImage3.jpg", 0, 0, "image");
 	myScore = new component("30px", "Consolas", "black", 1000, 40, "text");
+	myLives = new component("30px", "Consolas", "black", 1000, 80, "text");
 	var time = 0;
 
 	function timer(){
@@ -55,19 +57,27 @@ function gameStart() {
 	var dinoInterval = setInterval(makeDinos, 10000);
 
 	function makeGhosts(){
-		for(var i = 0; i<3 ; i++){
+		for(var i = 0; i<2 ; i++){
 			var myGhost = new enemyTypeThree(60, 60, "ghost.png", 30, 650*Math.random(), "image", 1);
 			ghosts.push(myGhost);
 		}
 	}
-	setTimeout(makeGhosts, 20000);
+	var ghostInterval = setInterval(makeGhosts, 20000);
 
-	function makeCake(){
-		var myCake = new friendliesTypeOne(20, 20, "cake.jpg", Math.random()*1100 , Math.random()* 550, "image", 1);
+	function makeCakes(){
+		var myCake = new friendliesTypeOne(20, 20, "cake.jpg", Math.random()*1100 , Math.random()*550, "image", 1);
 		cakes.push(myCake);
 	}
-	var cakeInterval = setInterval(makeCake, 5000);
+	var cakeInterval = setInterval(makeCakes, 5000);
+
+	function makePotions(){
+		var myPotion = new friendliesTypeTwo(15,15, "potion.png", Math.random()*1100, Math.random()*550, "image", 1);
+		potions.push(myPotion);
+	}
+	var potionInterval = setInterval(makePotions, 60000);
+
 	myGameArea.start();
+
 }
 
 
@@ -79,6 +89,7 @@ var myGameArea = {
 		this.context = this.canvas.getContext("2d");
 		document.getElementsByClassName("gameStarted")[0].insertBefore(this.canvas, document.getElementsByClassName("gameStarted")[0].childNodes[0]);
 		this.frameNo = 0;
+		this.lives = 3;
 		this.interval = setInterval(updateGameArea, 20);
 		window.addEventListener('keydown', function (e) {
 			myGameArea.keys = (myGameArea.keys || []);
@@ -97,9 +108,10 @@ var myGameArea = {
 	}
 }
 
-function component(width, height, color, x, y, type,status) {
+function component(width, height, color, x, y, type, status, godMode=0) {
 	this.status= status;
 	this.type = type;
+	this.godMode = godMode;
 	if (type == "image") {
 		this.image = new Image();
 		this.image.src = color;
@@ -156,7 +168,7 @@ function component(width, height, color, x, y, type,status) {
 }
 
 //tigers
-function enemyTypeOne(width, height, color, x, y, type,status) {
+function enemyTypeOne(width, height, color, x, y, type, status) {
 	this.status= status;
 	this.type = type;
 	if (type == "image") {
@@ -254,8 +266,41 @@ function enemyTypeThree(width, height, color, x, y, type, status) {
 	}
 }
 
-//cake
+//cakes
 function friendliesTypeOne(width, height, color, x, y, type, status) {
+	this.status = status;
+	this.type = type;
+	if (type == "image") {
+		this.image = new Image();
+		this.image.src = color;
+	}
+	this.width = width;
+	this.height = height;
+	this.speedX = 0;
+	this.speedY = 0;
+	this.x = x;
+	this.y = y;
+	this.update = function() {
+		ctx = myGameArea.context;
+		if (this.type == "image") {
+			ctx.drawImage(this.image, 
+				this.x, 
+				this.y,
+				this.width, this.height);
+		} 
+		else {
+			ctx.fillStyle = color;
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+		}
+	}
+	this.newPos = function() {
+		this.x += this.speedX;
+		this.y += this.speedY;
+	}
+}
+
+//potions
+function friendliesTypeTwo(width, height, color, x, y, type, status) {
 	this.status = status;
 	this.type = type;
 	if (type == "image") {
@@ -294,26 +339,49 @@ function updateGameArea() {
 	myBackground.update();
 	myScore.text="SCORE: " + myGameArea.frameNo;
 	myScore.update();
+	myLives.text="LIVES: " + myGameArea.lives;
+	myLives.update();
 
 	for (var i = 0; i < tigers.length; i ++) {
-		if (myGamePiece.crashWith(tigers[i])) {
-			youLost();
-			myGameArea.stop();
-		} 
+		if (myGamePiece.crashWith(tigers[i]) && myGamePiece.godMode === 1) {
+			tigers[i].status = 0;
+		}
+		if (myGamePiece.crashWith(tigers[i]) && tigers[i].status === 1 && myGamePiece.godMode === 0) {
+			myGameArea.lives--;
+			tigers[i].status = 0;
+			if(myGameArea.lives === 0){
+				youLost();
+				myGameArea.stop()
+			}
+		}
 	}
 
 	for (var i = 0; i < dinos.length; i ++) {
-		if (myGamePiece.crashWith(dinos[i])) {
-			youLost();
-			myGameArea.stop();
-		} 
+		if (myGamePiece.crashWith(dinos[i])  && myGamePiece.godMode === 1) {
+					dinos[i].status = 0;
+				}
+		if (myGamePiece.crashWith(dinos[i]) && dinos[i].status === 1 && myGamePiece.godMode === 0) {
+			myGameArea.lives--;
+			dinos[i].status = 0;
+			if(myGameArea.lives === 0){
+				youLost();
+				myGameArea.stop()
+			}
+		}
 	}
 
 	for (var i = 0; i < ghosts.length; i ++) {
-		if (myGamePiece.crashWith(ghosts[i])) {
-			youLost();
-			myGameArea.stop();
-		} 
+		if (myGamePiece.crashWith(ghosts[i]) && myGamePiece.godMode === 1) {
+			ghosts[i].status = 0;
+		}
+		if (myGamePiece.crashWith(ghosts[i]) && ghosts[i].status === 1 && myGamePiece.godMode === 0) {
+			myGameArea.lives--;
+			ghosts[i].status = 0;
+			if(myGameArea.lives === 0){
+				youLost();
+				myGameArea.stop()
+			}
+		}
 	}
 
 	for (var i = 0; i < cakes.length; i ++) {
@@ -322,6 +390,15 @@ function updateGameArea() {
 				myGameArea.frameNo += 200;
 				cakes[i].status = 0;
 			}
+		} 
+	}
+
+	for (var i = 0; i < potions.length; i ++) {
+		if (myGamePiece.crashWith(potions[i])) {
+			if(potions[i].status === 1) {
+				potions[i].status = 0;
+			}
+			myGamePiece.godMode = 1;
 		} 
 	}
 
@@ -335,6 +412,13 @@ function updateGameArea() {
 	if (myGamePiece.x >= 1175) myGamePiece.speedX = -5;
 	if (myGamePiece.y <= -5) myGamePiece.speedY = 5;
 	if (myGamePiece.y >= 675) myGamePiece.speedY = -5;
+	if(myGamePiece.godMode === 1){
+		myGamePiece.image.src = "file://localhost/Users/chuazhengwin/GA--Project-One/fire.png";
+	}
+
+	if(myGamePiece.godMode === 0){
+		myGamePiece.image.src = "file://localhost/Users/chuazhengwin/GA--Project-One/cat_image.png";
+	}
 	myGamePiece.newPos();
 	myGamePiece.update();
 
@@ -401,6 +485,20 @@ function updateGameArea() {
 			cakes[i].newPos();
 		}
 	}
+
+	for (var i = 0; i < potions.length; i ++) {
+		if(potions[i].status === 1){
+			potions[i].update();
+			potions[i].newPos();
+		}
+	}
+	if(myGamePiece.godMode === 1){
+			function godTime(){
+				myGamePiece.godMode = 0;
+			}
+			setTimeout(godTime, 5000);
+		}
+
 
 }
 
