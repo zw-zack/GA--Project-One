@@ -22,8 +22,10 @@ var dinos = new Array(0);
 var ghosts = new Array(0);
 var cakes = new Array(0);
 var potions = new Array(0);
-
+var healthpacks = new Array(0);
 var myScore;
+var myLives;
+
 
 function gameStart() {
 	document.getElementsByClassName("gameStarted")[0].style.display = "block";
@@ -54,10 +56,10 @@ function gameStart() {
 		var myDino = new enemyTypeTwo(70, 70, "dino.png", 1100, 650*Math.random(), "image", 1);
 		dinos.push(myDino);
 	}
-	var dinoInterval = setInterval(makeDinos, 10000);
+	var dinoInterval = setInterval(makeDinos, 7000);
 
 	function makeGhosts(){
-		for(var i = 0; i<2 ; i++){
+		for(var i = 0; i<3 ; i++){
 			var myGhost = new enemyTypeThree(60, 60, "ghost.png", 30, 650*Math.random(), "image", 1);
 			ghosts.push(myGhost);
 		}
@@ -76,8 +78,15 @@ function gameStart() {
 	}
 	var potionInterval = setInterval(makePotions, 60000);
 
-	myGameArea.start();
+	function makeHealthpacks(){
+		var myHealthpack = new friendliesTypeThree(30, 30, "healthpack.jpg", Math.random()*1100, Math.random()*550, "image", 1);
+		healthpacks.push(myHealthpack);
+	}
+	var healthpacksInterval = setInterval(makeHealthpacks, 25000);
 
+
+
+	myGameArea.start();
 }
 
 
@@ -332,6 +341,40 @@ function friendliesTypeTwo(width, height, color, x, y, type, status) {
 	}
 }
 
+//healthpacks
+function friendliesTypeThree(width, height, color, x, y, type, status) {
+	this.status = status;
+	this.type = type;
+	if (type == "image") {
+		this.image = new Image();
+		this.image.src = color;
+	}
+	this.width = width;
+	this.height = height;
+	this.speedX = 0;
+	this.speedY = 0;
+	this.x = x;
+	this.y = y;
+	this.update = function() {
+		ctx = myGameArea.context;
+		if (this.type == "image") {
+			ctx.drawImage(this.image, 
+				this.x, 
+				this.y,
+				this.width, this.height);
+		} 
+		else {
+			ctx.fillStyle = color;
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+		}
+	}
+	this.newPos = function() {
+		this.x += this.speedX;
+		this.y += this.speedY;
+	}
+}
+
+
 function updateGameArea() {
 	myGameArea.clear();
 	myGameArea.frameNo += 1;
@@ -399,6 +442,15 @@ function updateGameArea() {
 				potions[i].status = 0;
 			}
 			myGamePiece.godMode = 1;
+		} 
+	}
+
+	for (var i = 0; i < healthpacks.length; i ++) {
+		if (myGamePiece.crashWith(healthpacks[i])) {
+			if(healthpacks[i].status === 1) {
+				healthpacks[i].status = 0;
+				myGameArea.lives++;
+			}
 		} 
 	}
 
@@ -492,6 +544,7 @@ function updateGameArea() {
 			potions[i].newPos();
 		}
 	}
+
 	if(myGamePiece.godMode === 1){
 			function godTime(){
 				myGamePiece.godMode = 0;
@@ -499,6 +552,12 @@ function updateGameArea() {
 			setTimeout(godTime, 5000);
 		}
 
+	for (var i = 0; i < healthpacks.length; i ++) {
+		if(healthpacks[i].status === 1){
+			healthpacks[i].update();
+			healthpacks[i].newPos();
+		}
+	}
 
 }
 
