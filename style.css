@@ -14,7 +14,7 @@ canvas {
 }
 
 .startPage {
-	background-image: url("cat_image.png");
+	background-image: url("img/cat_Image.png");
 	background-repeat: no-repeat;
 	background-position: 50% 80%;
 	position: relative;

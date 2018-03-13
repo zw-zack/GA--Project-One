@@ -21,6 +21,7 @@ var tigers = new Array(0);
 var dinos = new Array(0);
 var ghosts = new Array(0);
 var aliens = new Array(0);
+var pinkAliens = new Array(0);
 var cakes = new Array(0);
 var potions = new Array(0);
 var healthpacks = new Array(0);
@@ -31,10 +32,10 @@ var myLives;
 
 function gameStart() {
 	document.getElementsByClassName("gameStarted")[0].style.display = "block";
-	myGamePiece = new component(30, 30, "cat_image.png", 580, 300, "image", 1);
-	myBackground = new component(1200, 700, "bgImage3.jpg", 0, 0, "image");
-	myScore = new component("30px", "Consolas", "black", 1000, 40, "text");
-	myLives = new component("30px", "Consolas", "black", 1000, 80, "text");
+	myGamePiece = new component(30, 30, "img/cat_Image.png", 580, 300, "image", 1);
+	myBackground = new component(1200, 700, "img/bgImage3.jpg", 0, 0, "image");
+	myScore = new component("30px", "Consolas", "red", 1000, 40, "text");
+	myLives = new component("30px", "Consolas", "red", 1000, 80, "text");
 	var time = 0;
 
 	function timer(){
@@ -48,55 +49,68 @@ function gameStart() {
 	}
 	setInterval(timer, 1000);
 
-	function makeTigers(){
-		var myTiger = new enemyTypeOne(50, 50, "tiger.png", 30, 650*Math.random(), "image", 1);
+	function makeTigersL(){
+		var myTiger = new enemyTypeOne(50, 50, "img/tiger.png", 30, 650*Math.random(), "image", 1);
 		tigers.push(myTiger);
 	}
-	var tigerInterval = setInterval(function(){ makeTigers()} , 3000);
+	var tigerInterval = setInterval(function(){ makeTigersL()} , 6000);
+
+	function makeTigersR(){
+		var myTiger = new enemyTypeOne(50, 50, "img/tiger.png", 1100, 650*Math.random(), "image", 1);
+		tigers.push(myTiger);
+	}
+	var tigerInterval = setInterval(function(){ makeTigersR()} , 6000);
+
 
 	function makeDinos(){
-		var myDino = new enemyTypeTwo(70, 70, "dino.png", 1100, 650*Math.random(), "image", 1);
+		var myDino = new enemyTypeTwo(70, 70, "img/dino.png", 1050, 650*Math.random(), "image", 1);
 		dinos.push(myDino);
 	}
-	var dinoInterval = setInterval(makeDinos, 7000);
+	var dinoInterval = setInterval(makeDinos, 10000);
 
 	function makeGhosts(){
 		for(var i = 0; i<3 ; i++){
-			var myGhost = new enemyTypeThree(60, 60, "ghost.png", 30, 650*Math.random(), "image", 1);
+			var myGhost = new enemyTypeThree(60, 60, "img/ghost.png", 30, 650*Math.random(), "image", 1);
 			ghosts.push(myGhost);
 		}
 	}
 	var ghostInterval = setInterval(makeGhosts, 20000);
 
 	function makeAliens(){
-		var myAlien = new enemyTypeFour(120, 120, "alien.png", 50, Math.random()*590, "image", 1);
+		var myAlien = new enemyTypeFour(120, 120, "img/alien.png", 50, Math.random()*590, "image", 1);
 		aliens.push(myAlien);
 	}
 	var alienInterval = setInterval(makeAliens, 60000);
 
+	function makePinkAliens(){
+		var myPinkAlien = new enemyTypeFive(40, 40, "img/pinkAlien.png", 1100, Math.random()*650, "image", 1);
+		pinkAliens.push(myPinkAlien);
+	}
+	var pinkAlienInterval = setInterval(makePinkAliens, 25000);
+
 	function makeCakes(){
-		var myCake = new friendliesTypeOne(20, 20, "cake.png", Math.random()*1100 , Math.random()*550, "image", 1);
+		var myCake = new friendliesTypeOne(20, 20, "img/cake.png", Math.random()*1100 , Math.random()*550, "image", 1);
 		cakes.push(myCake);
 	}
 	var cakeInterval = setInterval(makeCakes, 5000);
 
 	function makePotions(){
-		var myPotion = new friendliesTypeTwo(15,15, "potion.png", Math.random()*1100, Math.random()*550, "image", 1);
+		var myPotion = new friendliesTypeTwo(25,25, "img/potion.png", Math.random()*1100, Math.random()*550, "image", 1);
 		potions.push(myPotion);
 	}
 	var potionInterval = setInterval(makePotions, 50000);
 
 	function makeHealthpacks(){
-		var myHealthpack = new friendliesTypeThree(30, 30, "healthpack.jpg", Math.random()*1100, Math.random()*550, "image", 1);
+		var myHealthpack = new friendliesTypeThree(30, 30, "img/healthpack.jpg", Math.random()*1100, Math.random()*550, "image", 1);
 		healthpacks.push(myHealthpack);
 	}
-	var healthpackInterval = setInterval(makeHealthpacks, 25000);
+	var healthpackInterval = setInterval(makeHealthpacks, 17000);
 
 	function makeBombs(){
-		var myBomb = new friendliesTypeFour(40, 40, "bomb.png", Math.random()*1100, Math.random()*550, "image", 1, 0);
+		var myBomb = new friendliesTypeFour(40, 40, "img/bomb.png", Math.random()*1100, Math.random()*550, "image", 1, 0);
 		bombs.push(myBomb);
 	}
-	var bombInterval = setInterval(makeBombs, 55000);
+	var bombInterval = setInterval(makeBombs, 50000);
 
 
 
@@ -163,7 +177,6 @@ function component(width, height, color, x, y, type, status, godMode=0) {
 			ctx.fillStyle = color;
 			ctx.fillText(this.text, this.x, this.y);
 		}
-
 	}
 	this.newPos = function() {
 		this.x += this.speedX;
@@ -298,6 +311,39 @@ function enemyTypeFour(width, height, color, x, y, type, status) {
 	this.height = height;
 	this.speedX = Math.random() +4;
 	this.speedY = -Math.random() -4;    
+	this.x = x;
+	this.y = y;    
+	this.update = function() {
+		ctx = myGameArea.context;
+		if (this.type == "image") {
+			ctx.drawImage(this.image, 
+				this.x, 
+				this.y,
+				this.width, this.height);
+		} 
+		else {
+			ctx.fillStyle = color;
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+		}
+	}
+	this.newPos = function() {
+		this.x += this.speedX;
+		this.y += this.speedY;   
+	}
+}
+
+//pinkAliens
+function enemyTypeFive(width, height, color, x, y, type, status) {
+	this.status = status;
+	this.type = type;
+	if (type == "image") {
+		this.image = new Image();
+		this.image.src = color;
+	}
+	this.width = width;
+	this.height = height;
+	this.speedX = 0;
+	this.speedY = 0;    
 	this.x = x;
 	this.y = y;    
 	this.update = function() {
@@ -480,6 +526,7 @@ function updateGameArea() {
 	for (var i = 0; i < tigers.length; i ++) {
 		if (myGamePiece.crashWith(tigers[i]) && myGamePiece.godMode === 1) {
 			tigers[i].status = 0;
+			myGameArea.frameNo += 50;
 		}
 		if (myGamePiece.crashWith(tigers[i]) && tigers[i].status === 1 && myGamePiece.godMode === 0) {
 			myGameArea.lives--;
@@ -495,6 +542,7 @@ function updateGameArea() {
 	for (var i = 0; i < dinos.length; i ++) {
 		if (myGamePiece.crashWith(dinos[i])  && myGamePiece.godMode === 1) {
 			dinos[i].status = 0;
+			myGameArea.frameNo += 100;
 		}
 		if (myGamePiece.crashWith(dinos[i]) && dinos[i].status === 1 && myGamePiece.godMode === 0) {
 			myGameArea.lives--;
@@ -509,6 +557,7 @@ function updateGameArea() {
 	for (var i = 0; i < ghosts.length; i ++) {
 		if (myGamePiece.crashWith(ghosts[i]) && myGamePiece.godMode === 1) {
 			ghosts[i].status = 0;
+			myGameArea.frameNo += 150;
 		}
 		if (myGamePiece.crashWith(ghosts[i]) && ghosts[i].status === 1 && myGamePiece.godMode === 0) {
 			myGameArea.lives--;
@@ -523,10 +572,26 @@ function updateGameArea() {
 	for (var i = 0; i < aliens.length; i ++) {
 		if (myGamePiece.crashWith(aliens[i]) && myGamePiece.godMode === 1) {
 			aliens[i].status = 0;
+			myGameArea.frameNo += 500;
 		}
 		if (myGamePiece.crashWith(aliens[i]) && aliens[i].status === 1 && myGamePiece.godMode === 0) {
 			myGameArea.lives -= 3;
 			aliens[i].status = 0;
+			if(myGameArea.lives <= 0){
+				youLost();
+				myGameArea.stop()
+			}
+		}
+	}
+
+	for (var i = 0; i < pinkAliens.length; i ++) {
+		if (myGamePiece.crashWith(pinkAliens[i]) && myGamePiece.godMode === 1) {
+			pinkAliens[i].status = 0;
+			myGameArea.frameNo += 200;
+		}
+		if (myGamePiece.crashWith(pinkAliens[i]) && pinkAliens[i].status === 1 && myGamePiece.godMode === 0) {
+			myGameArea.lives --;
+			pinkAliens[i].status = 0;
 			if(myGameArea.lives <= 0){
 				youLost();
 				myGameArea.stop()
@@ -570,7 +635,7 @@ function updateGameArea() {
 		}
 
 		if (bombs[i].explosionMode === 1){
-			bombs[i].image.src = "file://localhost/Users/chuazhengwin/GA--Project-One/explosion.png";
+			bombs[i].image.src = "file://localhost/Users/chuazhengwin/GA--Project-One/img/explosion.png";
 			bombs[i].width = 400;
 			bombs[i].height = 400;
 
@@ -583,8 +648,6 @@ function updateGameArea() {
 		}
 	}
 
-
-
 	myGamePiece.speedX = 0;
 	myGamePiece.speedY = 0; 
 	if (myGameArea.keys && myGameArea.keys[37]) myGamePiece.speedX = -6; 
@@ -596,11 +659,11 @@ function updateGameArea() {
 	if (myGamePiece.y <= -5) myGamePiece.speedY = 5;
 	if (myGamePiece.y >= 675) myGamePiece.speedY = -5;
 	if(myGamePiece.godMode === 1){
-		myGamePiece.image.src = "file://localhost/Users/chuazhengwin/GA--Project-One/fire.png";
+		myGamePiece.image.src = "file://localhost/Users/chuazhengwin/GA--Project-One/img/fire.png";
 	}
 
 	if(myGamePiece.godMode === 0){
-		myGamePiece.image.src = "file://localhost/Users/chuazhengwin/GA--Project-One/cat_image.png";
+		myGamePiece.image.src = "file://localhost/Users/chuazhengwin/GA--Project-One/img/cat_image.png";
 	}
 	myGamePiece.newPos();
 	myGamePiece.update();
@@ -681,6 +744,25 @@ function updateGameArea() {
 		}
 	}
 
+	for( var i = 0; i < pinkAliens.length; i++ ) {
+		if(pinkAliens[i].x > myGamePiece.x) {
+			pinkAliens[i].x -= 0.5;
+		}
+		if(pinkAliens[i].x < myGamePiece.x) {
+			pinkAliens[i].x += 0.5;
+		}
+		if(pinkAliens[i].y > myGamePiece.y) {
+			pinkAliens[i].y -= 0.5;
+		}
+		if(pinkAliens[i].y < myGamePiece.y) {
+			pinkAliens[i].y += 0.5;
+		}
+		if(pinkAliens[i].status === 1){
+			 pinkAliens[i].update();
+			 pinkAliens[i].newPos();
+		}
+	}
+
 	for (var i = 0; i < cakes.length; i ++) {
 		if(cakes[i].status === 1){
 			cakes[i].update();
@@ -717,29 +799,37 @@ function updateGameArea() {
 		for(var a = 0; a < tigers.length; a++){
 			if(bombs[i].crashWith(tigers[a]) && bombs[i].explosionMode === 1){
 				tigers[a].status = 0;
+				myGameArea.frameNo += 50;
 			}
 		}
 		for(var b = 0; b < dinos.length; b++){
 			if(bombs[i].crashWith(dinos[b]) && bombs[i].explosionMode === 1){
 				dinos[b].status = 0;
+				myGameArea.frameNo += 100;
 			}
 		}
 
 		for(var c = 0; c < ghosts.length; c++){
 			if(bombs[i].crashWith(ghosts[c]) && bombs[i].explosionMode === 1){
 				ghosts[c].status = 0;
+				myGameArea.frameNo += 150;
 			}
 		}
 
 		for(var d = 0; d < aliens.length; d++){
 			if(bombs[i].crashWith(aliens[d]) && bombs[i].explosionMode === 1){
 				aliens[d].status = 0;
+				myGameArea.frameNo += 500;
 			}
 		}
 
+		for(var e = 0; e <pinkAliens.length; e++){
+			if(bombs[i].crashWith(pinkAliens[e]) && bombs[i].explosionMode === 1){
+				pinkAliens[e].status = 0;
+				myGameArea.frameNo += 200;
+			}
+		}
 	}
-
-
 }
 
 
