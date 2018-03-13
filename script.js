@@ -24,6 +24,7 @@ var aliens = new Array(0);
 var cakes = new Array(0);
 var potions = new Array(0);
 var healthpacks = new Array(0);
+var bombs = new Array(0);
 var myScore;
 var myLives;
 
@@ -41,7 +42,7 @@ function gameStart() {
 		if(time > 450){
 			clearInterval(tigerInterval);
 		}
-		if(time > 50){
+		if(time > 500){
 			clearInterval(dinoInterval);
 		}
 	}
@@ -67,8 +68,14 @@ function gameStart() {
 	}
 	var ghostInterval = setInterval(makeGhosts, 20000);
 
+	function makeAliens(){
+		var myAlien = new enemyTypeFour(120, 120, "alien.png", 50, Math.random()*590, "image", 1);
+		aliens.push(myAlien);
+	}
+	var alienInterval = setInterval(makeAliens, 60000);
+
 	function makeCakes(){
-		var myCake = new friendliesTypeOne(20, 20, "cake.jpg", Math.random()*1100 , Math.random()*550, "image", 1);
+		var myCake = new friendliesTypeOne(20, 20, "cake.png", Math.random()*1100 , Math.random()*550, "image", 1);
 		cakes.push(myCake);
 	}
 	var cakeInterval = setInterval(makeCakes, 5000);
@@ -85,11 +92,11 @@ function gameStart() {
 	}
 	var healthpackInterval = setInterval(makeHealthpacks, 25000);
 
-	function makeAliens(){
-		var myAlien = new enemyTypeFour(120, 120, "alien.png", 50, Math.random()*590, "image", 1);
-		aliens.push(myAlien);
+	function makeBombs(){
+		var myBomb = new friendliesTypeFour(40, 40, "bomb.png", Math.random()*1100, Math.random()*550, "image", 1, 0);
+		bombs.push(myBomb);
 	}
-	var alienInterval = setInterval(makeAliens, 60000);
+	var bombInterval = setInterval(makeBombs, 55000);
 
 
 
@@ -173,14 +180,11 @@ function component(width, height, color, x, y, type, status, godMode=0) {
 		var othertop = otherobj.y;
 		var otherbottom = otherobj.y + (otherobj.height);
 		var crash = true;
-		if (mybottom < othertop ||
-			mytop > otherbottom ||
-			myright < otherleft ||
-			myleft > otherright) {
+		if (mybottom < othertop || mytop > otherbottom || myright < otherleft || myleft > otherright) {
 			crash = false;
+		}
+		return crash;
 	}
-	return crash;
-}
 }
 
 //tigers
@@ -414,6 +418,54 @@ function friendliesTypeThree(width, height, color, x, y, type, status) {
 	}
 }
 
+//bombs
+function friendliesTypeFour(width, height, color, x, y, type, status, explosionMode) {
+	this.explosionMode = explosionMode;
+	this.status = status;
+	this.type = type;
+	if (type == "image") {
+		this.image = new Image();
+		this.image.src = color;
+	}
+	this.width = width;
+	this.height = height;
+	this.speedX = 0;
+	this.speedY = 0;
+	this.x = x;
+	this.y = y;
+	this.update = function() {
+		ctx = myGameArea.context;
+		if (this.type == "image") {
+			ctx.drawImage(this.image, 
+				this.x, 
+				this.y,
+				this.width, this.height);
+		} 
+		else {
+			ctx.fillStyle = color;
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+		}
+	}
+	this.newPos = function() {
+		this.x += this.speedX;
+		this.y += this.speedY;
+	}
+	this.crashWith = function(otherobj) {
+		var myleft = this.x;
+		var myright = this.x + (this.width);
+		var mytop = this.y;
+		var mybottom = this.y + (this.height);
+		var otherleft = otherobj.x;
+		var otherright = otherobj.x + (otherobj.width);
+		var othertop = otherobj.y;
+		var otherbottom = otherobj.y + (otherobj.height);
+		var crash = true;
+		if (mybottom < othertop || mytop > otherbottom || myright < otherleft || myleft > otherright) {
+			crash = false;
+		}
+		return crash;
+	}
+}
 
 function updateGameArea() {
 	myGameArea.clear();
@@ -437,12 +489,13 @@ function updateGameArea() {
 				myGameArea.stop()
 			}
 		}
+
 	}
 
 	for (var i = 0; i < dinos.length; i ++) {
 		if (myGamePiece.crashWith(dinos[i])  && myGamePiece.godMode === 1) {
-					dinos[i].status = 0;
-				}
+			dinos[i].status = 0;
+		}
 		if (myGamePiece.crashWith(dinos[i]) && dinos[i].status === 1 && myGamePiece.godMode === 0) {
 			myGameArea.lives--;
 			dinos[i].status = 0;
@@ -507,6 +560,30 @@ function updateGameArea() {
 			}
 		} 
 	}
+
+	for (var i = 0; i < bombs.length; i ++) {
+		if (myGamePiece.crashWith(bombs[i]) && bombs[i].status === 1) {
+			bombs[i].explosionMode = 1;
+			bombs[i].x -= 180;
+			bombs[i].y -= 180;
+			bombs[i].status = 0;
+		}
+
+		if (bombs[i].explosionMode === 1){
+			bombs[i].image.src = "file://localhost/Users/chuazhengwin/GA--Project-One/explosion.png";
+			bombs[i].width = 400;
+			bombs[i].height = 400;
+
+			function bombTime(){
+				for (var i = 0; i < bombs.length; i++) {
+					bombs[i].explosionMode = 0;
+				}
+			}
+			setTimeout(bombTime, 3000);
+		}
+	}
+
+
 
 	myGamePiece.speedX = 0;
 	myGamePiece.speedY = 0; 
@@ -619,11 +696,11 @@ function updateGameArea() {
 	}
 
 	if(myGamePiece.godMode === 1){
-			function godTime(){
-				myGamePiece.godMode = 0;
-			}
-			setTimeout(godTime, 5000);
+		function godTime(){
+			myGamePiece.godMode = 0;
 		}
+		setTimeout(godTime, 5000);
+	}
 
 	for (var i = 0; i < healthpacks.length; i ++) {
 		if(healthpacks[i].status === 1){
@@ -631,6 +708,37 @@ function updateGameArea() {
 			healthpacks[i].newPos();
 		}
 	}
+
+	for (var i = 0; i < bombs.length; i ++) {
+		if(bombs[i].status === 1 || bombs[i].explosionMode === 1){
+			bombs[i].update();
+			bombs[i].newPos();
+		}
+		for(var a = 0; a < tigers.length; a++){
+			if(bombs[i].crashWith(tigers[a]) && bombs[i].explosionMode === 1){
+				tigers[a].status = 0;
+			}
+		}
+		for(var b = 0; b < dinos.length; b++){
+			if(bombs[i].crashWith(dinos[b]) && bombs[i].explosionMode === 1){
+				dinos[b].status = 0;
+			}
+		}
+
+		for(var c = 0; c < ghosts.length; c++){
+			if(bombs[i].crashWith(ghosts[c]) && bombs[i].explosionMode === 1){
+				ghosts[c].status = 0;
+			}
+		}
+
+		for(var d = 0; d < aliens.length; d++){
+			if(bombs[i].crashWith(aliens[d]) && bombs[i].explosionMode === 1){
+				aliens[d].status = 0;
+			}
+		}
+
+	}
+
 
 }
 
