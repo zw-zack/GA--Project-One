@@ -3,7 +3,7 @@ function hideStartPage() {
 }
 
 function button() {
-	var startButton = document.getElementsByTagName("button")[0]
+	var startButton = document.getElementsByTagName("button")[0];
 	startButton.addEventListener('click', whenStartButtonClicked);
 }
 button();
@@ -12,7 +12,6 @@ function whenStartButtonClicked() {
 	hideStartPage();
 	gameStart();
 }
-
 
 var myGamePiece;
 var myBackground;
@@ -29,7 +28,6 @@ var bombs = new Array(0);
 var myScore;
 var myLives;
 
-
 function gameStart() {
 	document.getElementsByClassName("gameStarted")[0].style.display = "block";
 	myGamePiece = new component(30, 30, "img/cat_Image.png", 580, 300, "image", 1);
@@ -38,8 +36,8 @@ function gameStart() {
 	myLives = new component("30px", "Consolas", "red", 1000, 80, "text");
 	var time = 0;
 
-	function timer(){
-		time++
+	function timer() {
+		time++;
 		if(time > 450){
 			clearInterval(tigerInterval);
 		}
@@ -61,9 +59,8 @@ function gameStart() {
 	}
 	var tigerInterval = setInterval(function(){ makeTigersR()} , 6000);
 
-
 	function makeDinos(){
-		var myDino = new enemyTypeTwo(70, 70, "img/dino.png", 1050, 650*Math.random(), "image", 1);
+		var myDino = new enemyTypeTwo(70, 70, "img/dino.png", 1100, 600*Math.random(), "image", 1);
 		dinos.push(myDino);
 	}
 	var dinoInterval = setInterval(makeDinos, 10000);
@@ -95,28 +92,25 @@ function gameStart() {
 	var cakeInterval = setInterval(makeCakes, 5000);
 
 	function makePotions(){
-		var myPotion = new friendliesTypeTwo(25,25, "img/potion.png", Math.random()*1100, Math.random()*550, "image", 1);
+		var myPotion = new friendliesTypeTwo(25,25, "img/potion.png", Math.random()*1000, Math.random()*500, "image", 1);
 		potions.push(myPotion);
 	}
 	var potionInterval = setInterval(makePotions, 50000);
 
 	function makeHealthpacks(){
-		var myHealthpack = new friendliesTypeThree(30, 30, "img/healthpack.jpg", Math.random()*1100, Math.random()*550, "image", 1);
+		var myHealthpack = new friendliesTypeThree(30, 30, "img/healthpack.png", Math.random()*1000, Math.random()*500, "image", 1);
 		healthpacks.push(myHealthpack);
 	}
-	var healthpackInterval = setInterval(makeHealthpacks, 17000);
+	var healthpackInterval = setInterval(makeHealthpacks, 20000);
 
 	function makeBombs(){
-		var myBomb = new friendliesTypeFour(40, 40, "img/bomb.png", Math.random()*1100, Math.random()*550, "image", 1, 0);
+		var myBomb = new friendliesTypeFour(40, 40, "img/bomb.png", Math.random()*900, Math.random()*450, "image", 1, 0);
 		bombs.push(myBomb);
 	}
-	var bombInterval = setInterval(makeBombs, 50000);
-
-
+	var bombInterval = setInterval(makeBombs, 55000);
 
 	myGameArea.start();
 }
-
 
 var myGameArea = {
 	canvas : document.createElement("canvas"),
@@ -202,7 +196,7 @@ function component(width, height, color, x, y, type, status, godMode=0) {
 
 //tigers
 function enemyTypeOne(width, height, color, x, y, type, status) {
-	this.status= status;
+	this.status = status;
 	this.type = type;
 	if (type == "image") {
 		this.image = new Image();
@@ -536,7 +530,6 @@ function updateGameArea() {
 				myGameArea.stop()
 			}
 		}
-
 	}
 
 	for (var i = 0; i < dinos.length; i ++) {
@@ -746,20 +739,20 @@ function updateGameArea() {
 
 	for( var i = 0; i < pinkAliens.length; i++ ) {
 		if(pinkAliens[i].x > myGamePiece.x) {
-			pinkAliens[i].x -= 0.5;
+			pinkAliens[i].x -= 1;
 		}
 		if(pinkAliens[i].x < myGamePiece.x) {
-			pinkAliens[i].x += 0.5;
+			pinkAliens[i].x += 1;
 		}
 		if(pinkAliens[i].y > myGamePiece.y) {
-			pinkAliens[i].y -= 0.5;
+			pinkAliens[i].y -= 1;
 		}
 		if(pinkAliens[i].y < myGamePiece.y) {
-			pinkAliens[i].y += 0.5;
+			pinkAliens[i].y += 1;
 		}
 		if(pinkAliens[i].status === 1){
-			 pinkAliens[i].update();
-			 pinkAliens[i].newPos();
+			pinkAliens[i].update();
+			pinkAliens[i].newPos();
 		}
 	}
 
@@ -796,35 +789,37 @@ function updateGameArea() {
 			bombs[i].update();
 			bombs[i].newPos();
 		}
+
 		for(var a = 0; a < tigers.length; a++){
-			if(bombs[i].crashWith(tigers[a]) && bombs[i].explosionMode === 1){
+			if(bombs[i].crashWith(tigers[a]) && bombs[i].explosionMode === 1 && tigers[a].status === 1){
 				tigers[a].status = 0;
 				myGameArea.frameNo += 50;
 			}
 		}
+
 		for(var b = 0; b < dinos.length; b++){
-			if(bombs[i].crashWith(dinos[b]) && bombs[i].explosionMode === 1){
+			if(bombs[i].crashWith(dinos[b]) && bombs[i].explosionMode === 1 && dinos[b].status === 1){
 				dinos[b].status = 0;
 				myGameArea.frameNo += 100;
 			}
 		}
 
 		for(var c = 0; c < ghosts.length; c++){
-			if(bombs[i].crashWith(ghosts[c]) && bombs[i].explosionMode === 1){
+			if(bombs[i].crashWith(ghosts[c]) && bombs[i].explosionMode === 1 && ghosts[c].status === 1){
 				ghosts[c].status = 0;
 				myGameArea.frameNo += 150;
 			}
 		}
 
 		for(var d = 0; d < aliens.length; d++){
-			if(bombs[i].crashWith(aliens[d]) && bombs[i].explosionMode === 1){
+			if(bombs[i].crashWith(aliens[d]) && bombs[i].explosionMode === 1 && aliens[d].status === 1){
 				aliens[d].status = 0;
 				myGameArea.frameNo += 500;
 			}
 		}
 
 		for(var e = 0; e <pinkAliens.length; e++){
-			if(bombs[i].crashWith(pinkAliens[e]) && bombs[i].explosionMode === 1){
+			if(bombs[i].crashWith(pinkAliens[e]) && bombs[i].explosionMode === 1 && pinkAliens[e].status === 1){
 				pinkAliens[e].status = 0;
 				myGameArea.frameNo += 200;
 			}
@@ -832,7 +827,6 @@ function updateGameArea() {
 	}
 }
 
-
 function youLost() {
-	alert("You lost! Your scorce is: " + myGameArea.frameNo);
+	alert("You lost! Your score is: " + myGameArea.frameNo);
 }
