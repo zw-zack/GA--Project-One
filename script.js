@@ -696,6 +696,10 @@ function updateGameArea() {
 
 	for (var i = 0; i < potions.length; i ++) {
 		if (MGP.crashWith(potions[i]) && MGP.ghostMode === 0 && MGP.godMode === 0) {
+			function godTime(){
+				MGP.godMode = 0;
+			}
+			setTimeout(godTime, 5000);
 			if(potions[i].status === 1) {
 				potions[i].status = 0;
 			}
@@ -880,12 +884,6 @@ function updateGameArea() {
 		}
 	}
 
-	if(MGP.godMode === 1){
-		function godTime(){
-			MGP.godMode = 0;
-		}
-		setTimeout(godTime, 5000);
-	}
 
 	for (var i = 0; i < healthpacks.length; i ++) {
 		if(healthpacks[i].status === 1){
