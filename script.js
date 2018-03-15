@@ -16,6 +16,31 @@
 //phase 5 (Bonus Crazy Mode) : 30 secs(t= 300-330)
 
 //functions for homepage
+
+function homePage(){
+	homePageMusic();
+}
+window.onload = homePage;
+
+function homePageMusic(){
+	myHomePageMusic.play();
+}
+
+function homePageMusicStop(){
+	myHomePageMusic.stop();
+	myHomePageMusicToggle = 0;
+}
+
+function gameStartMusic(){
+	myGameStartMusic.play();
+	myGameStartMusicToggle = 1;
+}
+
+function gameStartMusicStop(){
+	myGameStartMusic.stop();
+	myHomePageMusicToggle = 0;
+}
+
 function hideStartPage() {
 	document.getElementsByClassName("startPage")[0].style.display = "none";
 }
@@ -44,6 +69,8 @@ function startButton() {
 function whenStartButtonClicked() {
 	hideStartPage();
 	gameStart();
+	homePageMusicStop();
+	myGameStartMusic.play();
 }
 function powerupsButton(){
 	var powerupsButton = document.getElementById("powerupsButton");
@@ -77,14 +104,36 @@ function whenBackButtonTwoClicked(){
 	hideEnemiesPage();
 }
 
+function youLost() {
+	alert("Game Over! Your score is: " + myGameArea.frameNo + ". You survived for "+ time + " seconds!" );
+	myGameStartMusicStop();
+}
+
+var homePageMusicInterval = setInterval(homePageMusic, 64000);
+setInterval(function() {
+	if(myHomePageMusicToggle === 0){
+		clearInterval(homePageMusicInterval);
+	}
+}, 1);
+var gameStartMusicInterval = setInterval(gameStartMusic, 162000);
+setInterval(function() {
+	if(myGameStartMusicToggle === 0){
+		clearInterval(gameStartMusicInterval);
+	}
+}, 1);
 startButton();
 powerupsButton();
 backButton();
 
 
+var myHomePageMusic = new sound("sound/homePageMusic.mp3");
+var myGameStartMusic = new sound("sound/gameStart.mp3");
 var myGamePiece;
 var myBackground;
-var myTiger;
+var myHomePageMusic;
+var myHomePageMusicToggle= 1;
+var myGameStartMusic;
+var myGameStartMusicToggle= 1;
 var tigers = new Array(0);
 var dinos = new Array(0);
 var ghosts = new Array(0);
@@ -101,12 +150,36 @@ var myScore;
 var myHealth;
 var time = -1;
 
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
+}
+
 function gameStart() {
 	document.getElementsByClassName("gameStarted")[0].style.display = "block";
 	myGamePiece = new component(30, 30, "img/cat_Image.png", 580, 300, "image", 1);
 	myBackground = new component(1200, 700, "img/bgImage3.jpg", 0, 0, "image");
 	myScore = new component("30px", "Consolas", "red", 10, 40, "text");
 	myHealth = new component("30px", "Consolas", "red", 10, 80, "text");
+	myCakeSound = new sound("sound/cake.mp3");
+	myHealthpackSound = new sound("sound/healthpack.mp3");
+	myGhostModeSound = new sound("sound/ghostMode.mp3");
+	myPotionSound = new sound("sound/potion.mp3");
+	myMoneyBagSound = new sound("sound/moneyBag.mp3")
+	myBombSound = new sound("sound/explosion.mp3");
+	myDamagedSound = new sound("sound/damaged.mp3");
+
+
 
 	function timer() {
 		time++;
@@ -655,6 +728,7 @@ function gameStart() {
 	myGameArea.start();
 }
 
+//canvas updating. width height. lives. frameno. clearRect interval.
 var myGameArea = {
 	canvas : document.createElement("canvas"),
 	start : function() {
@@ -681,6 +755,7 @@ var myGameArea = {
 	}
 }
 
+//main player
 function component(width, height, color, x, y, type, status, godMode=0, ghostMode=0) {
 	this.status= status;
 	this.type = type;
@@ -735,7 +810,7 @@ function component(width, height, color, x, y, type, status, godMode=0, ghostMod
 	}
 }
 
-//tigers
+//tigers, random and linear movement, bounces on egdes, left or right spawning location
 function enemyTypeOne(width, height, color, x, y, type, status) {
 	this.status = status;
 	this.type = type;
@@ -768,7 +843,7 @@ function enemyTypeOne(width, height, color, x, y, type, status) {
 	}
 }
 
-//dinos
+//dinos, random and linear movement, bounces on egdes, left or right spawning location
 function enemyTypeTwo(width, height, color, x, y, type, status) {
 	this.status= status;
 	this.type = type;
@@ -801,7 +876,7 @@ function enemyTypeTwo(width, height, color, x, y, type, status) {
 	}
 }
 
-//ghosts
+//ghosts, random and linear movement, bounces on egdes, left or right spawning location
 function enemyTypeThree(width, height, color, x, y, type, status) {
 	this.status= status;
 	this.type = type;
@@ -834,7 +909,7 @@ function enemyTypeThree(width, height, color, x, y, type, status) {
 	}
 }
 
-//aliens
+//aliens, random and linear movement, bounces on egdes, left or right spawning location
 function enemyTypeFour(width, height, color, x, y, type, status) {
 	this.status= status;
 	this.type = type;
@@ -867,7 +942,7 @@ function enemyTypeFour(width, height, color, x, y, type, status) {
 	}
 }
 
-//pinkAliens
+//pinkAliens, locates and follows the main character, left or right spawning location
 function enemyTypeFive(width, height, color, x, y, type, status) {
 	this.status = status;
 	this.type = type;
@@ -900,7 +975,7 @@ function enemyTypeFive(width, height, color, x, y, type, status) {
 	}
 }
 
-//giraffes
+//giraffes, locates and follows the main character, left or right spawning location
 function enemyTypeSix(width, height, color, x, y, type, status) {
 	this.status = status;
 	this.type = type;
@@ -933,7 +1008,7 @@ function enemyTypeSix(width, height, color, x, y, type, status) {
 	}
 }
 
-//cakes
+//cakes, bonus point, random spawn location
 function friendliesTypeOne(width, height, color, x, y, type, status) {
 	this.status = status;
 	this.type = type;
@@ -966,7 +1041,7 @@ function friendliesTypeOne(width, height, color, x, y, type, status) {
 	}
 }
 
-//potions
+//potions, activates godMode, random spawn location(slightly centralised)
 function friendliesTypeTwo(width, height, color, x, y, type, status) {
 	this.status = status;
 	this.type = type;
@@ -999,7 +1074,7 @@ function friendliesTypeTwo(width, height, color, x, y, type, status) {
 	}
 }
 
-//healthpacks
+//healthpacks, inceases health, random spawn locations
 function friendliesTypeThree(width, height, color, x, y, type, status) {
 	this.status = status;
 	this.type = type;
@@ -1032,7 +1107,7 @@ function friendliesTypeThree(width, height, color, x, y, type, status) {
 	}
 }
 
-//bombs
+//bombs, destroys enemies within a large radius, random spawn location(largely centralised)
 function friendliesTypeFour(width, height, color, x, y, type, status, explosionMode) {
 	this.explosionMode = explosionMode;
 	this.status = status;
@@ -1081,7 +1156,7 @@ function friendliesTypeFour(width, height, color, x, y, type, status, explosionM
 	}
 }
 
-//EyeMask
+//EyeMask, activates ghostMode, random spawn location(slightly centralised)
 function friendliesTypeFive(width, height, color, x, y, type, status) {
 	this.status = status;
 	this.type = type;
@@ -1114,7 +1189,7 @@ function friendliesTypeFive(width, height, color, x, y, type, status) {
 	}
 }
 
-//moneyBag
+//moneyBag, moves away from player, no bouncing on screen edge, increases score, random spawn locations(extremely centralised)
 function friendliesTypeSix(width, height, color, x, y, type, status) {
 	this.status = status;
 	this.type = type;
@@ -1147,6 +1222,7 @@ function friendliesTypeSix(width, height, color, x, y, type, status) {
 	}
 }
 
+//main redrawing of canvas. called from variable myGameArea
 function updateGameArea() {
 	console.log(time);
 	myGameArea.clear();
@@ -1159,25 +1235,28 @@ function updateGameArea() {
 	myHealth.update();
 	var MGP = myGamePiece;
 
+	//collision of friendlies to player
 	for (var i = 0; i < cakes.length; i ++) {
 		if (MGP.crashWith(cakes[i])) {
 			if(cakes[i].status === 1) {
 				myGameArea.frameNo += 200;
 				cakes[i].status = 0;
+				myCakeSound.play();
 			}
 		} 
 	}
 
 	for (var i = 0; i < potions.length; i ++) {
-		if (MGP.crashWith(potions[i]) && MGP.ghostMode === 0 && MGP.godMode === 0) {
+		if (MGP.crashWith(potions[i]) && MGP.ghostMode === 0 && MGP.godMode === 0 && potions[i].status === 1) {
 			function godTime(){
 				MGP.godMode = 0;
 			}
 			setTimeout(godTime, 5000);
 			if(potions[i].status === 1) {
 				potions[i].status = 0;
+				MGP.godMode = 1;
+				myPotionSound.play();
 			}
-			MGP.godMode = 1;
 		} 
 	}
 
@@ -1185,6 +1264,7 @@ function updateGameArea() {
 		if (MGP.crashWith(eyeMasks[i]) && eyeMasks[i].status === 1 && MGP.ghostMode === 0 && MGP.godMode === 0) {
 			eyeMasks[i].status = 0;
 			MGP.ghostMode = 1;
+			myGhostModeSound.play();
 			function invisTime(){
 				MGP.ghostMode = 0;
 			}	
@@ -1192,26 +1272,28 @@ function updateGameArea() {
 		}
 	}
 
+	if (MGP.ghostMode === 1){
+		MGP.image.src = "file://localhost/Users/chuazhengwin/GA--Project-One/img/catGhost.png";
+	}
+
 	for (var i = 0; i < moneyBags.length; i ++) {
 		if (MGP.crashWith(moneyBags[i])) {
 			if(moneyBags[i].status === 1) {
 				myGameArea.frameNo += 1000;
 				moneyBags[i].status = 0;
+				myMoneyBagSound.play();
 			}
 		} 
 	}
 
-	if (MGP.ghostMode === 1){
-		MGP.image.src = "file://localhost/Users/chuazhengwin/GA--Project-One/img/catGhost.png";
-	}
-
-
+	//collision of enemies to player
 	for (var i = 0; i < bombs.length; i ++) {
 		if (MGP.crashWith(bombs[i]) && bombs[i].status === 1 && MGP.ghostMode === 0) {
 			bombs[i].explosionMode = 1;
 			bombs[i].x -= 180;
 			bombs[i].y -= 180;
 			bombs[i].status = 0;
+			myBombSound.play();
 		}
 
 		if (bombs[i].explosionMode === 1){
@@ -1233,6 +1315,7 @@ function updateGameArea() {
 			if(healthpacks[i].status === 1) {
 				healthpacks[i].status = 0;
 				myGameArea.lives++;
+				myHealthpackSound.play();
 			}
 		} 
 	}
@@ -1244,6 +1327,7 @@ function updateGameArea() {
 		}
 		if (MGP.crashWith(tigers[i]) && tigers[i].status === 1 && MGP.godMode === 0 && MGP.ghostMode === 0) {
 			myGameArea.lives--;
+			myDamagedSound.play();
 			tigers[i].status = 0;
 			MGP.ghostMode = 1;
 			function invisTime(){
@@ -1264,6 +1348,7 @@ function updateGameArea() {
 		}
 		if (MGP.crashWith(dinos[i]) && dinos[i].status === 1 && MGP.godMode === 0 && MGP.ghostMode === 0) {
 			myGameArea.lives--;
+			myDamagedSound.play();
 			dinos[i].status = 0;
 			MGP.ghostMode = 1;
 			function invisTime(){
@@ -1284,6 +1369,7 @@ function updateGameArea() {
 		}
 		if (MGP.crashWith(ghosts[i]) && ghosts[i].status === 1 && MGP.godMode === 0 && MGP.ghostMode === 0) {
 			myGameArea.lives--;
+			myDamagedSound.play();
 			ghosts[i].status = 0;
 			MGP.ghostMode = 1;
 			function invisTime(){
@@ -1304,6 +1390,7 @@ function updateGameArea() {
 		}
 		if (MGP.crashWith(aliens[i]) && aliens[i].status === 1 && MGP.godMode === 0 && MGP.ghostMode === 0) {
 			myGameArea.lives -= 3;
+			myDamagedSound.play();
 			aliens[i].status = 0;
 			MGP.ghostMode = 1;
 			function invisTime(){
@@ -1357,7 +1444,7 @@ function updateGameArea() {
 		}
 	}
 
-
+	//movement of player
 	MGP.speedX = 0;
 	MGP.speedY = 0; 
 	if (myGameArea.keys && myGameArea.keys[37]) MGP.speedX = -6; 
@@ -1377,6 +1464,8 @@ function updateGameArea() {
 	MGP.newPos();
 	MGP.update();
 
+
+	//updating positions of enemies
 	for( var i = 0; i < tigers.length; i++ ) {
 		if (tigers[i].x <= 0) {
 			tigers[i].speedX = tigers[i].speedX* -1 ;
@@ -1491,6 +1580,7 @@ function updateGameArea() {
 		}
 	}
 
+	//updating position of friendlies
 	for (var i = 0; i < cakes.length; i ++) {
 		if(cakes[i].status === 1){
 			cakes[i].update();
@@ -1513,12 +1603,14 @@ function updateGameArea() {
 		}
 	}
 
+
 	for (var i = 0; i < bombs.length; i ++) {
 		if(bombs[i].status === 1 || bombs[i].explosionMode === 1){
 			bombs[i].update();
 			bombs[i].newPos();
 		}
 
+		//collision of bomb's explosion to enemies
 		for(var a = 0; a < tigers.length; a++){
 			if(bombs[i].crashWith(tigers[a]) && bombs[i].explosionMode === 1 && tigers[a].status === 1){
 				tigers[a].status = 0;
@@ -1547,14 +1639,14 @@ function updateGameArea() {
 			}
 		}
 
-		for(var e = 0; e <pinkAliens.length; e++){
+		for(var e = 0; e < pinkAliens.length; e++){
 			if(bombs[i].crashWith(pinkAliens[e]) && bombs[i].explosionMode === 1 && pinkAliens[e].status === 1){
 				pinkAliens[e].status = 0;
 				myGameArea.frameNo += 100;
 			}
 		}
 
-		for(var f = 0; f <giraffes.length; f++){
+		for(var f = 0; f < giraffes.length; f++){
 			if(bombs[i].crashWith(giraffes[f]) && bombs[i].explosionMode === 1 && giraffes[f].status === 1){
 				giraffes[f].status = 0;
 				myGameArea.frameNo += 1000;
@@ -1581,19 +1673,10 @@ function updateGameArea() {
 		}
 		if(moneyBags[i].y < MGP.y) {
 			moneyBags[i].y -= 1;
-		 }
-		// if (moneyBags[i].x <= 0) moneyBags[i].speedX = 5;
-		// if (moneyBags[i].x >= 1175) moneyBags[i].speedX = -5;
-		// if (moneyBags[i].y <= -5) moneyBags[i].speedY = 5;
-		// if (moneyBags[i].y >= 675) moneyBags[i].speedY = -5;
-
+		}
 		if(moneyBags[i].status === 1){
 			moneyBags[i].update();
 			moneyBags[i].newPos();
 		}
 	}
-}
-
-function youLost() {
-	alert("Game Over! Your score is: " + myGameArea.frameNo + ". You survived for "+ time + " seconds!" );
 }
