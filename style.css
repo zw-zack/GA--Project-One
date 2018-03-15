@@ -17,6 +17,7 @@ table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
     width: 100%;
+    margin: 0px 0px 20px 0px;
 }
 
 th {
@@ -61,28 +62,30 @@ img{
 
 }
 
-
 #powerupsButton {
 	font-size: 20px;
 	padding: 5px 30px 5px 30px;
+	margin: 0px 20px;
 }
 
 #enemiesButton {
 	font-size: 20px;
 	padding: 5px 30px 5px 30px;
+	margin: 0px 20px;
 }
 
 #backButtonOne, #backButtonTwo {
 	font-size: 20px;
 	padding: 10px 30px 10px 30px;
-	margin: 0 auto;
 }
 
 .powerupsPage{
+	text-align: center;
 	display: none;
 }
 
 .enemiesPage{
+	text-align: center;
 	display: none;
 }
 .gameStarted {
