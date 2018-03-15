@@ -13,14 +13,41 @@ canvas {
 	margin: 0 auto;
 }
 
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 10px 100px 10px 100px;
+}
+
+td {
+	border: 1px solid #dddddd;
+    text-align: center;
+    padding: 10px 50px 10px 50px;
+}
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+img{
+	height: 100px;
+	width: 100px;
+}
+
 .startPage {
 	background-image: url("img/cat_Image.png");
 	background-repeat: no-repeat;
-	background-position: 50% 80%;
+	background-position: 50% 100%;
 	position: relative;
 	text-align: center;
 	height: 750px;
 	width: 100%;
+	display: block;
 }
 
 #startText {
@@ -30,11 +57,34 @@ canvas {
 #startButton {
 	font-size: 20px;
 	padding: 10px 30px 10px 30px;
+	margin: 0px 0px 30px 0px;
 
 }
 
 
+#powerupsButton {
+	font-size: 20px;
+	padding: 5px 30px 5px 30px;
+}
 
+#enemiesButton {
+	font-size: 20px;
+	padding: 5px 30px 5px 30px;
+}
+
+#backButtonOne, #backButtonTwo {
+	font-size: 20px;
+	padding: 10px 30px 10px 30px;
+	margin: 0 auto;
+}
+
+.powerupsPage{
+	display: none;
+}
+
+.enemiesPage{
+	display: none;
+}
 .gameStarted {
 	position: relative;
 	height: 100%;

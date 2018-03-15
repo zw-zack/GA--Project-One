@@ -20,15 +20,78 @@ function hideStartPage() {
 	document.getElementsByClassName("startPage")[0].style.display = "none";
 }
 
-function button() {
+function showStartPage() {
+	document.getElementsByClassName("startPage")[0].style.display = "block";
+
+}
+
+function showPowerupsPage(){
+	document.getElementsByClassName("powerupsPage")[0].style.display = "block";
+}
+
+function hidePowerupsPage(){
+	document.getElementsByClassName("powerupsPage")[0].style.display = "none";
+
+}
+
+function showEnemiesPage(){
+	document.getElementsByClassName("enemiesPage")[0].style.display = "block";
+}
+
+function hideEnemiesPage(){
+	document.getElementsByClassName("enemiesPage")[0].style.display = "none";
+
+}
+
+function startButton() {
 	var startButton = document.getElementsByTagName("button")[0];
 	startButton.addEventListener('click', whenStartButtonClicked);
 }
-button();
+startButton();
 
 function whenStartButtonClicked() {
 	hideStartPage();
 	gameStart();
+}
+
+function powerupsButton(){
+	var powerupsButton = document.getElementById("powerupsButton");
+	powerupsButton.addEventListener('click', whenPowerupsButtonClicked);
+}
+powerupsButton();
+
+function whenPowerupsButtonClicked(){
+	hideStartPage();
+	showPowerupsPage();
+}
+
+function enemiesButton(){
+	var enemiesButton = document.getElementById("enemiesButton");
+	enemiesButton.addEventListener('click', whenEnemiesButtonClicked);
+}
+enemiesButton();
+
+function whenEnemiesButtonClicked(){
+	hideStartPage();
+	showEnemiesPage();
+}
+
+function backButton(){
+	var backButtonOne = document.getElementById("backButtonOne");
+	backButtonOne.addEventListener('click', whenBackButtonOneClicked);
+	var backButtonTwo = document.getElementById("backButtonTwo");
+	backButtonTwo.addEventListener('click', whenBackButtonTwoClicked);
+}
+backButton();
+
+function whenBackButtonOneClicked(){
+	showStartPage();
+	hidePowerupsPage();
+}
+
+function whenBackButtonTwoClicked(){
+	showStartPage();
+	hideEnemiesPage();
 }
 
 var myGamePiece;
@@ -45,15 +108,15 @@ var healthpacks = new Array(0);
 var bombs = new Array(0);
 var eyeMasks = new Array(0);
 var myScore;
-var myLives;
-var time = 129;
+var myHealth;
+var time = -1;
 
 function gameStart() {
 	document.getElementsByClassName("gameStarted")[0].style.display = "block";
 	myGamePiece = new component(30, 30, "img/cat_Image.png", 580, 300, "image", 1);
 	myBackground = new component(1200, 700, "img/bgImage3.jpg", 0, 0, "image");
 	myScore = new component("30px", "Consolas", "red", 10, 40, "text");
-	myLives = new component("30px", "Consolas", "red", 10, 80, "text");
+	myHealth = new component("30px", "Consolas", "red", 10, 80, "text");
 
 	function timer() {
 		time++;
@@ -814,8 +877,8 @@ function component(width, height, color, x, y, type, status, godMode=0, ghostMod
 		myBackground.update();
 		myScore.text="SCORE: " + myGameArea.frameNo;
 		myScore.update();
-		myLives.text="LIVES: " + myGameArea.lives;
-		myLives.update();
+		myHealth.text="Health: " + myGameArea.lives;
+		myHealth.update();
 		var MGP = myGamePiece;
 
 		for (var i = 0; i < tigers.length; i ++) {
