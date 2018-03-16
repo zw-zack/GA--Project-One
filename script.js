@@ -221,7 +221,7 @@ function sound(src) {
 
 function gameStart() {
 	document.getElementsByClassName("gameStarted")[0].style.display = "block";
-	myGamePiece = new component(30, 30, "img/cat_Image.png", 580, 300, "image", 1);
+	myGamePiece = new component(30, 30, "img/catImage.png", 580, 300, "image", 1);
 	myBackground = new component(1200, 700, "img/bgImage3.jpg", 0, 0, "image");
 	myScore = new component("30px", "Consolas", "red", 10, 40, "text");
 	myHealth = new component("30px", "Consolas", "red", 10, 80, "text");
@@ -1538,7 +1538,7 @@ function updateGameArea() {
 		MGP.image.src = "img/fire.png";
 	}
 	if(MGP.godMode === 0 && MGP.ghostMode === 0){
-		MGP.image.src = "img/cat_Image.png";
+		MGP.image.src = "img/catImage.png";
 	}
 	if(!paused){ 
 		MGP.newPos();
