@@ -22,19 +22,12 @@ function homePage(){
 }
 window.onload = homePage;
 
-function homePageMusic(){
-	myHomePageMusic.play();
-}
 
 function homePageMusicStop(){
 	myHomePageMusic.stop();
 	myHomePageMusicToggle = 0;
 }
 
-function gameStartMusic(){
-	myGameStartMusic.play();
-	myGameStartMusicToggle = 1;
-}
 
 function gameStartMusicStop(){
 	myGameStartMusic.stop();
@@ -70,7 +63,7 @@ function whenStartButtonClicked() {
 	hideStartPage();
 	gameStart();
 	homePageMusicStop();
-	myGameStartMusic.play();
+	gameStartMusic();
 }
 function powerupsButton(){
 	var powerupsButton = document.getElementById("powerupsButton");
@@ -103,22 +96,43 @@ function whenBackButtonTwoClicked(){
 	showStartPage();
 	hideEnemiesPage();
 }
+function hideMyGameArea(){
+	document.getElementsByClassName("gameStarted")[0].style.display = "none";
+}
+
+function mainPage() {
+	showStartPage();
+	hideMyGameArea();
+}
 
 function youLost() {
 	alert("Game Over! Your score is: " + myGameArea.frameNo + ". You survived for "+ time + " seconds!" );
-	myGameStartMusicStop();
+	gameStartMusicStop();
+	mainPage();
+	homePageMusic();
+	clearGameArea();
+	time = 0;
 }
 
-var homePageMusicInterval = setInterval(homePageMusic, 64000);
+function homePageMusic(){
+	myHomePageMusic.play();
+}
+var homePageMusicInterval = setInterval(homePageMusic, 66000);
 setInterval(function() {
 	if(myHomePageMusicToggle === 0){
 		clearInterval(homePageMusicInterval);
 	}
 }, 1);
-var gameStartMusicInterval = setInterval(gameStartMusic, 162000);
+
+function gameStartMusic(){
+	myGameStartMusic.play();
+	myGameStartMusicToggle = 1;
+}
+var gameStartMusicInterval = setInterval(gameStartMusic, 164000);
 setInterval(function() {
 	if(myGameStartMusicToggle === 0){
 		clearInterval(gameStartMusicInterval);
+		gameStartMusicStop();
 	}
 }, 1);
 startButton();
@@ -131,9 +145,9 @@ var myGameStartMusic = new sound("sound/gameStart.mp3");
 var myGamePiece;
 var myBackground;
 var myHomePageMusic;
-var myHomePageMusicToggle= 1;
+var myHomePageMusicToggle = 1;
 var myGameStartMusic;
-var myGameStartMusicToggle= 1;
+var myGameStartMusicToggle = 0;
 var tigers = new Array(0);
 var dinos = new Array(0);
 var ghosts = new Array(0);
@@ -149,6 +163,46 @@ var moneyBags = new Array(0);
 var myScore;
 var myHealth;
 var time = -1;
+var paused = false;
+
+function clearGameArea(){
+	for(var i = 0; i < tigers.length; i++){
+				tigers[i].status = 0;
+			}
+	for(var i = 0; i < dinos.length; i++){
+		dinos[i].status = 0;
+	}
+	for(var i = 0; i < ghosts.length; i++){
+		ghosts[i].status = 0;
+	}
+	for(var i = 0; i < aliens.length; i++){
+				aliens[i].status = 0;
+			}
+	for(var i = 0; i < pinkAliens.length; i++){
+		pinkAliens[i].status = 0;
+	}
+	for(var i = 0; i < giraffes.length; i++){
+		giraffes[i].status = 0;
+	}
+	for(var i = 0; i < cakes.length; i++){
+		cakes[i].status = 0;
+	}
+	for(var i = 0; i < healthpacks.length; i++){
+		healthpacks[i].status = 0;
+	}
+	for(var i = 0; i < eyeMasks.length; i++){
+		eyeMasks[i].status = 0;
+	}
+	for(var i = 0; i < potions.length; i++){
+		potions[i].status = 0;
+	}
+	for(var i = 0; i < bombs.length; i++){
+		bombs[i].status = 0;
+	}
+	for(var i = 0; i < moneyBags.length; i++){
+		moneyBags[i].status = 0;
+	}
+}
 
 function sound(src) {
     this.sound = document.createElement("audio");
@@ -178,11 +232,33 @@ function gameStart() {
 	myMoneyBagSound = new sound("sound/moneyBag.mp3")
 	myBombSound = new sound("sound/explosion.mp3");
 	myDamagedSound = new sound("sound/damaged.mp3");
+	myGameArea.start();
 
+	function togglePause()
+	{
+	    if (!paused)
+	    {
+	        paused = true;
+	    } else if (paused)
+	    {
+	       paused = false;
+	    }
+
+	}
+
+	window.addEventListener('keydown', function (e) {
+	var key = e.keyCode;
+	if (key === 80)// p key
+	{
+	    togglePause();
+	}
+	});
 
 
 	function timer() {
-		time++;
+		if(!paused){ 
+			time++;
+		}
 		if(time === 0){
 			//spawn S1P1 enemies
 			var tigerIntervalL = setInterval(makeTigersL , 1500);
@@ -209,7 +285,6 @@ function gameStart() {
 		if(time === 30){
 			//removing remaining S1P1 enemies and friendlies
 			myGameArea.frameNo += 750;
-			console.log(myGameArea.frameNo);
 			for(var i = 0; i < tigers.length; i++){
 				tigers[i].status = 0;
 			}
@@ -725,7 +800,6 @@ function gameStart() {
 			makeMoneyBags();
 		}
 	}
-	myGameArea.start();
 }
 
 //canvas updating. width height. lives. frameno. clearRect interval.
@@ -1224,15 +1298,20 @@ function friendliesTypeSix(width, height, color, x, y, type, status) {
 
 //main redrawing of canvas. called from variable myGameArea
 function updateGameArea() {
-	console.log(time);
 	myGameArea.clear();
 	myGameArea.frameNo += 1;
-	myBackground.newPos();
-	myBackground.update();
+	if(!paused){ 
+		myBackground.newPos();
+		myBackground.update();
+	}
 	myScore.text="SCORE: " + myGameArea.frameNo;
-	myScore.update();
+	if(!paused){ 
+		myScore.update(); 
+	}
 	myHealth.text="Health: " + myGameArea.lives;
-	myHealth.update();
+	if(!paused){ 
+		myHealth.update();
+	}
 	var MGP = myGamePiece;
 
 	//collision of friendlies to player
@@ -1335,8 +1414,8 @@ function updateGameArea() {
 			}	
 			var eyeMaskTimeout = setTimeout(invisTime, 3000);
 			if(myGameArea.lives <= 0){
+				myGameArea.stop()
 				youLost();
-				myGameArea.stop();
 			}
 		}
 	}
@@ -1356,8 +1435,8 @@ function updateGameArea() {
 			}	
 			var eyeMaskTimeout = setTimeout(invisTime, 3000);
 			if(myGameArea.lives <= 0){
-				youLost();
 				myGameArea.stop()
+				youLost();
 			}
 		}
 	}
@@ -1377,8 +1456,8 @@ function updateGameArea() {
 			}	
 			var eyeMaskTimeout = setTimeout(invisTime, 3000);
 			if(myGameArea.lives <= 0){
-				youLost();
 				myGameArea.stop()
+				youLost();
 			}
 		}
 	}
@@ -1398,8 +1477,8 @@ function updateGameArea() {
 			}	
 			var eyeMaskTimeout = setTimeout(invisTime, 3000);
 			if(myGameArea.lives <= 0){
-				youLost();
 				myGameArea.stop()
+				youLost();
 			}
 		}
 	}
@@ -1418,8 +1497,8 @@ function updateGameArea() {
 			}	
 			var eyeMaskTimeout = setTimeout(invisTime, 3000);
 			if(myGameArea.lives <= 0){
-				youLost();
 				myGameArea.stop()
+				youLost();
 			}
 		}
 	}
@@ -1438,8 +1517,8 @@ function updateGameArea() {
 			}	
 			var eyeMaskTimeout = setTimeout(invisTime, 3000);
 			if(myGameArea.lives <= 0){
-				youLost();
 				myGameArea.stop()
+				youLost();
 			}
 		}
 	}
@@ -1461,8 +1540,11 @@ function updateGameArea() {
 	if(MGP.godMode === 0 && MGP.ghostMode === 0){
 		MGP.image.src = "file://localhost/Users/chuazhengwin/GA--Project-One/img/cat_Image.png";
 	}
-	MGP.newPos();
-	MGP.update();
+	if(!paused){ 
+		MGP.newPos();
+		MGP.update(); 
+	}
+
 
 
 	//updating positions of enemies
@@ -1480,8 +1562,10 @@ function updateGameArea() {
 			tigers[i].speedY = tigers[i].speedY* -1;
 		}
 		if(tigers[i].status === 1){
-			tigers[i].update();
-			tigers[i].newPos();
+			if(!paused){ 
+				tigers[i].update();
+				tigers[i].newPos();
+			}
 		}
 	}
 
@@ -1499,8 +1583,10 @@ function updateGameArea() {
 			dinos[i].speedY = dinos[i].speedY* -1;
 		}
 		if(dinos[i].status === 1){
-			dinos[i].update();
-			dinos[i].newPos();
+			if(!paused){ 
+				dinos[i].update();
+				dinos[i].newPos();
+			}
 		}
 	}
 
@@ -1518,8 +1604,10 @@ function updateGameArea() {
 			ghosts[i].speedY = ghosts[i].speedY* -1;
 		}
 		if(ghosts[i].status === 1){
-			ghosts[i].update();
-			ghosts[i].newPos();
+			if(!paused){ 
+				ghosts[i].update();
+				ghosts[i].newPos();
+			}
 		}
 	}
 
@@ -1537,8 +1625,10 @@ function updateGameArea() {
 			aliens[i].speedY = aliens[i].speedY* -1;
 		}
 		if(aliens[i].status === 1){
-			aliens[i].update();
-			aliens[i].newPos();
+			if(!paused){ 
+				aliens[i].update();
+				aliens[i].newPos();
+			}
 		}
 	}
 
@@ -1556,8 +1646,10 @@ function updateGameArea() {
 			pinkAliens[i].y += 0.8;
 		}
 		if(pinkAliens[i].status === 1){
-			pinkAliens[i].update();
-			pinkAliens[i].newPos();
+			if(!paused){ 
+				pinkAliens[i].update();
+				pinkAliens[i].newPos();
+			}
 		}
 	}
 
@@ -1575,39 +1667,49 @@ function updateGameArea() {
 			giraffes[i].y += 2.2;
 		}
 		if(giraffes[i].status === 1){
-			giraffes[i].update();
-			giraffes[i].newPos();
+			if(!paused){ 
+				giraffes[i].update();
+				giraffes[i].newPos();
+			}
 		}
 	}
 
 	//updating position of friendlies
 	for (var i = 0; i < cakes.length; i ++) {
 		if(cakes[i].status === 1){
-			cakes[i].update();
-			cakes[i].newPos();
+			if(!paused){ 
+				cakes[i].update();
+				cakes[i].newPos();
+			}
 		}
 	}
 
 	for (var i = 0; i < potions.length; i ++) {
 		if(potions[i].status === 1){
-			potions[i].update();
-			potions[i].newPos();
+			if(!paused){ 
+				potions[i].update();
+				potions[i].newPos();
+			}
 		}
 	}
 
 
 	for (var i = 0; i < healthpacks.length; i ++) {
 		if(healthpacks[i].status === 1){
-			healthpacks[i].update();
-			healthpacks[i].newPos();
+			if(!paused){ 
+				healthpacks[i].update();
+				healthpacks[i].newPos();
+			}
 		}
 	}
 
 
 	for (var i = 0; i < bombs.length; i ++) {
 		if(bombs[i].status === 1 || bombs[i].explosionMode === 1){
-			bombs[i].update();
-			bombs[i].newPos();
+			if(!paused){ 
+				bombs[i].update();
+				bombs[i].newPos();
+			}
 		}
 
 		//collision of bomb's explosion to enemies
@@ -1656,8 +1758,10 @@ function updateGameArea() {
 
 	for (var i = 0; i < eyeMasks.length; i ++) {
 		if(eyeMasks[i].status === 1){
-			eyeMasks[i].update();
-			eyeMasks[i].newPos();
+			if(!paused){ 
+				eyeMasks[i].update();
+				eyeMasks[i].newPos();
+			}
 		}
 	}
 
@@ -1675,8 +1779,10 @@ function updateGameArea() {
 			moneyBags[i].y -= 1;
 		}
 		if(moneyBags[i].status === 1){
-			moneyBags[i].update();
-			moneyBags[i].newPos();
+			if(!paused){ 
+				moneyBags[i].update();
+				moneyBags[i].newPos();
+			}
 		}
 	}
 }
