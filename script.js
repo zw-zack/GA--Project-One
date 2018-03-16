@@ -1352,7 +1352,7 @@ function updateGameArea() {
 	}
 
 	if (MGP.ghostMode === 1){
-		MGP.image.src = "file://localhost/Users/chuazhengwin/GA--Project-One/img/catGhost.png";
+		MGP.image.src = "img/catGhost.png";
 	}
 
 	for (var i = 0; i < moneyBags.length; i ++) {
@@ -1376,7 +1376,7 @@ function updateGameArea() {
 		}
 
 		if (bombs[i].explosionMode === 1){
-			bombs[i].image.src = "file://localhost/Users/chuazhengwin/GA--Project-One/img/explosion.png";
+			bombs[i].image.src = "img/explosion.png";
 			bombs[i].width = 400;
 			bombs[i].height = 400;
 
@@ -1535,10 +1535,10 @@ function updateGameArea() {
 	if (MGP.y <= -5) MGP.speedY = 5;
 	if (MGP.y >= 675) MGP.speedY = -5;
 	if(MGP.godMode === 1){
-		MGP.image.src = "file://localhost/Users/chuazhengwin/GA--Project-One/img/fire.png";
+		MGP.image.src = "img/fire.png";
 	}
 	if(MGP.godMode === 0 && MGP.ghostMode === 0){
-		MGP.image.src = "file://localhost/Users/chuazhengwin/GA--Project-One/img/cat_Image.png";
+		MGP.image.src = "img/cat_Image.png";
 	}
 	if(!paused){ 
 		MGP.newPos();
